@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 //============ lessen 82
+
 @Controller
 @RequestMapping("/api/v1")
 @SessionAttributes({"user"})
@@ -25,18 +26,36 @@ public class GreetingController {
     }
 
     @GetMapping("/hello")
-    public String hello(Model model, HttpServletRequest request,
-                        @ModelAttribute("userRead") UserReadDto userReadDto) {
-
-        model.addAttribute("user", new UserReadDto(1, "Vadim"));
+    public String hello(Model model,
+                        HttpServletRequest request,
+                        @ModelAttribute("userReadDto") UserReadDto userReadDto) {
+//        request.getSession().setAttribute(); sessionScope
+//        request.setAttribute(); requestScope
+//        request.getSession().getAttribute("user")
+        model.addAttribute("user", userReadDto);
 
         return "greeting/hello";
     }
 
-        @GetMapping("/hello/bye")
-    public String bye(@SessionAttribute("user") UserReadDto user,Model model) {
-
+    @GetMapping("/bye")
+    public String bye(@SessionAttribute("user") UserReadDto user, Model model) {
+//        request.getSession().getAttribute("user")
         return "greeting/bye";
+    }
+
+    @GetMapping("/hello/{id}")
+    public ModelAndView hello2(ModelAndView modelAndView, HttpServletRequest request,
+                               @RequestParam Integer age,
+                               @RequestHeader String accept,
+                               @CookieValue("JSESSIONID") String JSESSIONID,
+                               @PathVariable("id") Integer id) {
+        String ageParamValue = request.getParameter("age");
+        String acceptHeader = request.getHeader("accept");
+        Cookie[] cookies = request.getCookies();
+
+        modelAndView.setViewName("greeting/hello");
+
+        return modelAndView;
     }
 
 //    @GetMapping("/hello")
